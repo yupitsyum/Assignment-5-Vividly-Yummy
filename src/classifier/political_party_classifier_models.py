@@ -10,7 +10,7 @@ __email__ = "jtiao@westmont.edu, dponcedeleon@westmont.edu"
 
 
 class OurFeatureSet(FeatureSet):
-
+    @classmethod
     def build(cls, source_object: Any, known_clas=None, **kwargs) -> FeatureSet:
         pass
 
@@ -22,5 +22,6 @@ class OurAbstractClassifier(AbstractClassifier):
     def present_features(self, top_n: int = 1) -> None:
         pass
 
+    @classmethod
     def train(cls, training_set: Iterable[FeatureSet]) -> AbstractClassifier:
         pass

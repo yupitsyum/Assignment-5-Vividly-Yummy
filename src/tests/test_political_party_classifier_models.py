@@ -1,9 +1,8 @@
 """Unit tests for functions in `spider.orb.orb_models`.
 """
 
-import os
 import unittest
-from ..classifier.political_party_classifier_models import *
+from classifier.political.political_party_classifier_models import *
 
 __author__ = "David Ponce De Leon, Eli Tiao"
 __credits__ = ["David Ponce De Leon, Eli Tiao"]
@@ -30,7 +29,6 @@ class Test(unittest.TestCase):
 
         self.assertTrue(predicted_class in ["Class1", "Class2", "Class3"])
         self.assertNotEqual(predicted_class, "Unknown")
-        self.assertRegex(predicted_class, r"^[A-Za-z0-9_]+$")
 
     def test_present_features(self):
         classifier = OurAbstractClassifier.train([OurFeatureSet({...}), OurFeatureSet({...})])

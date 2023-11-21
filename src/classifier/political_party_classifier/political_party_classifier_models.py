@@ -15,6 +15,7 @@ class OurFeature(Feature):
 
 class OurFeatureSet(FeatureSet):
     """A set of features that represent a single object. Optionally includes the known class of the object.
+        Our feature set is going to consist of the individual words within a chunk of each inaugural speech.
 
         Attributes:
             _feat (set[Feature]): a set of features that define this object for the purposes of a classifier
@@ -24,14 +25,6 @@ class OurFeatureSet(FeatureSet):
     @classmethod
     def build(cls, source_object: Any, known_clas=None, **kwargs) -> FeatureSet:
         """Method that builds and returns an instance of FeatureSet given a source object that requires preprocessing.
-
-        For instance, a subclass of `FeatureSet` may be designed to take in a text file object as the `source_object`
-        build features based on the tokens that are present in the text file. In this subclass, the logic for
-        tokenization and instantiation of `Feature` objects based on the tokens should be written in this method.
-
-        The `return` statement in the actual implementation of this method should simply be a call to the
-        constructor where `features` argument is the set of `Feature` instances created within the implementation of
-        this method.
 
         :param source_object: object to build the feature set from
         :param known_clas: pre-defined classification of the source object
@@ -43,7 +36,8 @@ class OurFeatureSet(FeatureSet):
 
 
 class OurAbstractClassifier(AbstractClassifier):
-    """Abstract definition for an object classifier."""
+    """After classifying our train set by hand, the abstract classifier will allow us to see which words can most
+        accurately identify which party the speech is from. """
     def __init__(self):
         self._struct1 = 0
         self._struct2 = 0

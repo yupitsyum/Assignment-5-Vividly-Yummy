@@ -9,6 +9,10 @@ __credits__ = ["Eli Tiao", "David Ponce De Leon"]
 __email__ = "jtiao@westmont.edu, dponcedeleon@westmont.edu"
 
 
+class OurFeature(Feature):
+    pass
+
+
 class OurFeatureSet(FeatureSet):
     """A set of features that represent a single object. Optionally includes the known class of the object.
 
@@ -34,11 +38,24 @@ class OurFeatureSet(FeatureSet):
         :param kwargs: any additional data needed to preprocess the `source_object` into a feature set
         :return: an instance of `FeatureSet` built based on the `source_object` passed in
         """
+        # TODO: build sets of sentences that have similar features
         pass
 
 
 class OurAbstractClassifier(AbstractClassifier):
     """Abstract definition for an object classifier."""
+    def __init__(self):
+        self._struct1 = 0
+        self._struct2 = 0
+
+    @property
+    def struct1(self):
+        return self._struct1
+
+    @property
+    def struct2(self):
+        return self._struct2
+
     def gamma(self, a_feature_set: FeatureSet) -> str:
         """Given a single feature set representing an object to be classified, returns the most probable class
         for the object based on the training this classifier received (via a call to `train` class method).
@@ -46,6 +63,7 @@ class OurAbstractClassifier(AbstractClassifier):
         :param a_feature_set: a single feature set representing an object to be classified
         :return: name of the class with the highest probability for the object
         """
+        # TODO: return probability for the sentence and the political party
         pass
 
     def present_features(self, top_n: int = 1) -> None:
@@ -55,6 +73,7 @@ class OurAbstractClassifier(AbstractClassifier):
 
         :param top_n: how many of the top features to print; must be 1 or greater
         """
+        # TODO: present the features that were most helpful in determining the political party of the sentence
         pass
 
     @classmethod
@@ -66,4 +85,5 @@ class OurAbstractClassifier(AbstractClassifier):
         :param training_set: An iterable collection of `FeatureSet` to use for training the classifier
         :return: an instance of `AbstractClassifier` with its training already completed
         """
+        # TODO: Implement it such that it takes in a feature set of sentences of either political party to train
         pass

@@ -2,7 +2,7 @@
 """
 
 import unittest
-from classifier.political.political_party_classifier_models import *
+from ..classifier.political.political_party_classifier_models import *
 
 __author__ = "David Ponce De Leon, Eli Tiao"
 __credits__ = ["David Ponce De Leon, Eli Tiao"]

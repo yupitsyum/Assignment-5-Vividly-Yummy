@@ -8,10 +8,19 @@ __copyright__ = "Copyright 2023, Westmont College"
 __credits__ = ["Eli Tiao", "David Ponce De Leon"]
 __email__ = "jtiao@westmont.edu, dponcedeleon@westmont.edu"
 
+# makes a dictionary
+class OurFeature:
+    def makeWordDict(self):
+        words = self.split()
+        word_features = {}
 
-class OurFeature(Feature):
-    pass
+        for word in words:
+            if word in word_features:
+                word_features[word] += 1
+            else:
+                word_features[word] = 1
 
+        return word_features
 
 class OurFeatureSet(FeatureSet):
     """A set of features that represent a single object. Optionally includes the known class of the object.

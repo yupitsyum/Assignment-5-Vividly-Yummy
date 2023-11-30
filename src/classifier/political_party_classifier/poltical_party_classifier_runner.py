@@ -7,3 +7,11 @@ __author__ = "Eli Tiao, David Ponce De Leon"
 __copyright__ = "Copyright 2023, Westmont College"
 __credits__ = ["Eli Tiao", "David Ponce De Leon"]
 __email__ = "jtiao@westmont.edu, dponcedeleon@westmont.edu"
+
+
+def main() -> None:
+    pass
+
+
+if __name__ == '__main__':
+    main()

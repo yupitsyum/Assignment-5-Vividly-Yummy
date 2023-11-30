@@ -79,8 +79,20 @@ class OurAbstractClassifier(AbstractClassifier):
         :return: name of the class with the highest probability for the object
         """
         # TODO: return probability for the sentence and the political party
+        # Calculate probabilities for each class based on feature frequencies
+        class_probabilities = {}
+        total_features = sum(a_feature_set.feat.values())
 
-        return str(max(a_feature_set._feat, key=lambda word: a_feature_set._feat[word]))
+        for class_label in iter(self.feature_freq_dist):
+            class_probabilities[class_label] = 0
+            for word, count in a_feature_set.feat.items():
+                # Using Laplace smoothing to avoid division by zero
+                probability_word_given_class = (self.feature_freq_dist[word, class_label] + 1) / (
+                        self.feature_freq_dist.N() + total_features)
+                class_probabilities[class_label] += count * probability_word_given_class
+
+        # Return the class with the highest probability
+        return max(class_probabilities, key=class_probabilities.get)
 
     def present_features(self, top_n: int = 1) -> None:
         """Prints `top_n` feature(s) used by this classifier in the descending order of informativeness of the
@@ -108,7 +120,8 @@ class OurAbstractClassifier(AbstractClassifier):
         classifier = OurAbstractClassifier()
 
         for feature_set in training_set:
-            classifier.feature_freq_dist.update(feature_set._feat)
-            classifier.total_samples += 1
+            for word, count in feature_set.feat.items():
+                classifier.feature_freq_dist[word, feature_set.clas] += count
+                classifier.total_samples += 1
 
         return classifier

@@ -41,9 +41,6 @@ class OurFeatureSet(FeatureSet):
         :return: an instance of `FeatureSet` built based on the `source_object` passed in
         """
 
-        if stop_words is None:
-            stop_words = []
-
         words = word_tokenize(source_object.lower())
         filtered_words = [word.lower() for word in words if word.lower() not in stop_words]
 
@@ -70,9 +67,11 @@ class OurAbstractClassifier(AbstractClassifier):
         # Calculate probabilities for each class based on feature frequencies
         rep_prob = 0.0
         dem_prob = 0.0
-        for feature in a_feature_set.feat.items():
-            rep_prob += 1/2 * self.dict[feature][0]
-            dem_prob += 1/2 * self.dict[feature][1]
+        for feature in a_feature_set.feat:
+            feature_name = feature.name
+            if feature_name in self.dict:
+                rep_prob += 1 / 2 * self.dict[feature_name][0]
+                dem_prob += 1 / 2 * self.dict[feature_name][1]
 
         return "Republican" if rep_prob > dem_prob else "Democratic"
 
@@ -84,10 +83,12 @@ class OurAbstractClassifier(AbstractClassifier):
         :param top_n: how many of the top features to print; must be 1 or greater
         """
         # TODO: present the features that were most helpful in determining the political party of the sentence
-        top_features = self.feature_freq_dist.most_common(top_n)
+        sorted_features = sorted(self.dict.items(), key=lambda item: abs(item[1][0] - item[1][1]), reverse=True)
+
+        # Print top_n features
         print(f"Top {top_n} features:")
-        for feature, count in top_features:
-            print(f"{feature}: {count}")
+        for feature, (rep_prob, dem_prob) in sorted_features[:top_n]:
+            print(f"{feature}: Republican Probability = {rep_prob}, Democratic Probability = {dem_prob}")
 
     @classmethod
     def train(cls, training_set: Iterable[FeatureSet]) -> AbstractClassifier:
@@ -101,24 +102,23 @@ class OurAbstractClassifier(AbstractClassifier):
         # TODO: Implement it such that it takes in a feature set of sentences of either political party to train
         classifier = {}
 
-        republican_tally = 0
-        democratic_tally = 0
+        republican_tally = 0.0000000000001
+        democratic_tally = 0.0000000000001
 
         for feature_set in training_set:
             party = feature_set.clas
             for feature in feature_set.feat:
-                if feature:
-                    if feature not in classifier:
-                        classifier[feature] = [0,0]
-                    if party == "Republican":
-                        classifier[feature][0] += 1
-                        republican_tally += 1
-                    else:
-                        classifier[feature][1] += 1
-                        democratic_tally += 1
+                if feature not in classifier:
+                    classifier[feature] = [0,0]
+                elif party == "Republican":
+                    classifier[feature][0] += 1
+                    republican_tally += 1
+                else:
+                    classifier[feature][1] += 1
+                    democratic_tally += 1
 
-            for feature in classifier.keys():
-                classifier[feature][0] /= republican_tally
-                classifier[feature][1] /= democratic_tally
+        for feature in classifier.keys():
+            classifier[feature][0] /= republican_tally
+            classifier[feature][1] /= democratic_tally
 
         return OurAbstractClassifier(classifier)

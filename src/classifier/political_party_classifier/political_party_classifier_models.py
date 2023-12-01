@@ -52,10 +52,8 @@ class OurFeatureSet(FeatureSet):
 class OurAbstractClassifier(AbstractClassifier):
     """After classifying our train set by hand, the abstract classifier will allow us to see which words can most
         accurately identify which party the speech is from. """
-    def __init__(self):
-        super().__init__()
-        self.feature_freq_dist = {'Republican': {}, 'Democratic': {}}
-        self.total_samples = {'Republican': 0, 'Democratic': 0}
+    def __init__(self, classifier: dict):
+        self.dict = classifier
 
     def gamma(self, a_feature_set: FeatureSet) -> str:
         """Given a single feature set representing an object to be classified, returns the most probable class
@@ -66,7 +64,13 @@ class OurAbstractClassifier(AbstractClassifier):
         """
         # TODO: return probability for the sentence and the political party
         # Calculate probabilities for each class based on feature frequencies
-        class_log_probabilities = {}
+        rep_prob = 0.0
+        dem_prob = 0.0
+        for feature in a_feature_set:
+            rep_prob += 1/2 * self.dict[feature.name][0]
+            dem_prob += 1/2 * self.dict[feature.name][1]
+
+        return "Republican" if rep_prob > dem_prob else "Democratic"
 
     def present_features(self, top_n: int = 1) -> None:
         """Prints `top_n` feature(s) used by this classifier in the descending order of informativeness of the
@@ -93,12 +97,23 @@ class OurAbstractClassifier(AbstractClassifier):
         # TODO: Implement it such that it takes in a feature set of sentences of either political party to train
         classifier = {}
 
+        republican_tally = 0
+        democratic_tally = 0
+
         for feature_set in training_set:
             party = feature_set.clas
             for feature in feature_set.feat:
-                if feature not in classifier:
-                    classifier[party][feature] = 1
+                if feature:
+                    classifier[feature] = [0,0]
+                if party == "Republican":
+                    classifier[feature][0] += 1
+                    republican_tally += 1
                 else:
-                    classifier[party][feature] += 1
+                    classifier[feature][1] += 1
+                    democratic_tally += 1
 
-        return classifier
+            for feature in classifier.keys():
+                classifier[feature][0] /= republican_tally
+                classifier[feature][1] /= democratic_tally
+
+        return OurAbstractClassifier(classifier)

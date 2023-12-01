@@ -3,7 +3,7 @@ from nltk.corpus import inaugural
 from nltk.probability import FreqDist
 from nltk.tokenize import word_tokenize
 import random
-from ..classifier_models import *
+from classifier.classifier_models import *
 
 __author__ = "Eli Tiao, David Ponce De Leon"
 __copyright__ = "Copyright 2023, Westmont College"
@@ -13,8 +13,8 @@ __email__ = "jtiao@westmont.edu, dponcedeleon@westmont.edu"
 
 # makes a dictionary
 class OurFeature(Feature):
-    def __init__(self, speech):
-        super().__init__()
+    def __init__(self, name, speech):
+        super().__init__(name="word_freq")
         self.speech = speech
 
     def split(self):
@@ -41,7 +41,7 @@ class OurFeatureSet(FeatureSet):
             _feat (set[Feature]): a set of features that define this object for the purposes of a classifier
             _clas (str | None): optional attribute set as the pre-defined classification of this object
         """
-    def __init__(self, features: set[Feature], known_clas=None ):
+    def __init__(self, features: set[Feature], known_clas=None):
         super().__init__(features, known_clas)
 
     @classmethod
@@ -56,7 +56,7 @@ class OurFeatureSet(FeatureSet):
         # TODO: build sets of sentences that have similar features
         if known_clas is None:
             raise ValueError("known_clas must be provided to build")
-        feature_instance = OurFeature(source_object)
+        feature_instance = OurFeature(speech=source_object, name="word_freq")
         features = feature_instance.makeWordDict()
 
         return OurFeatureSet(features, known_clas)
@@ -78,6 +78,7 @@ class OurAbstractClassifier(AbstractClassifier):
         :return: name of the class with the highest probability for the object
         """
         # TODO: return probability for the sentence and the political party
+
         return str(max(a_feature_set._feat, key=lambda word: a_feature_set._feat[word]))
 
     def present_features(self, top_n: int = 1) -> None:

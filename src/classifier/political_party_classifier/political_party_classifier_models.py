@@ -40,11 +40,15 @@ class OurFeatureSet(FeatureSet):
         :param kwargs: any additional data needed to preprocess the `source_object` into a feature set
         :return: an instance of `FeatureSet` built based on the `source_object` passed in
         """
+
+        if stop_words is None:
+            stop_words = []
+
         words = word_tokenize(source_object.lower())
-        filtered_words = [word.lower() for word in words if word not in stop_words]
+        filtered_words = [word.lower() for word in words if word.lower() not in stop_words]
 
         unique_words = set(filtered_words)
-        features = {(unique_words, True) for word in unique_words}
+        features = {OurFeature(word, True) for word in unique_words}
 
         return OurFeatureSet(features, known_clas)
 
@@ -66,9 +70,9 @@ class OurAbstractClassifier(AbstractClassifier):
         # Calculate probabilities for each class based on feature frequencies
         rep_prob = 0.0
         dem_prob = 0.0
-        for feature in a_feature_set:
-            rep_prob += 1/2 * self.dict[feature.name][0]
-            dem_prob += 1/2 * self.dict[feature.name][1]
+        for feature in a_feature_set.feat.items():
+            rep_prob += 1/2 * self.dict[feature][0]
+            dem_prob += 1/2 * self.dict[feature][1]
 
         return "Republican" if rep_prob > dem_prob else "Democratic"
 
@@ -104,13 +108,14 @@ class OurAbstractClassifier(AbstractClassifier):
             party = feature_set.clas
             for feature in feature_set.feat:
                 if feature:
-                    classifier[feature] = [0,0]
-                if party == "Republican":
-                    classifier[feature][0] += 1
-                    republican_tally += 1
-                else:
-                    classifier[feature][1] += 1
-                    democratic_tally += 1
+                    if feature not in classifier:
+                        classifier[feature] = [0,0]
+                    if party == "Republican":
+                        classifier[feature][0] += 1
+                        republican_tally += 1
+                    else:
+                        classifier[feature][1] += 1
+                        democratic_tally += 1
 
             for feature in classifier.keys():
                 classifier[feature][0] /= republican_tally

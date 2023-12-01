@@ -1,5 +1,6 @@
 import nltk
 from nltk.corpus import inaugural
+import math
 
 from nltk.probability import FreqDist
 from nltk.tokenize import word_tokenize
@@ -14,24 +15,8 @@ __email__ = "jtiao@westmont.edu, dponcedeleon@westmont.edu"
 
 # makes a dictionary
 class OurFeature(Feature):
-    def __init__(self, name, speech):
-        super().__init__(name="word_freq")
-        self.speech = speech
-
-    def split(self):
-        return word_tokenize(self.speech)
-
-    def makeWordDict(self):
-        words = self.split()
-        word_features = {}
-
-        for word in words:
-            if word in word_features:
-                word_features[word] += 1
-            else:
-                word_features[word] = 1
-
-        return word_features
+    def __init__(self, name, value=None):
+        super().__init__(name, value)
 
 
 class OurFeatureSet(FeatureSet):
@@ -44,9 +29,10 @@ class OurFeatureSet(FeatureSet):
         """
     def __init__(self, features: set[Feature], known_clas=None):
         super().__init__(features, known_clas)
+        self.known_clas = known_clas
 
     @classmethod
-    def build(cls, source_object: Any, known_clas=None, **kwargs) -> FeatureSet:
+    def build(cls, source_object: Any, known_clas=None, stop_words=None, **kwargs) -> FeatureSet:
         """Method that builds and returns an instance of FeatureSet given a source object that requires preprocessing.
 
         :param source_object: object to build the feature set from
@@ -54,11 +40,11 @@ class OurFeatureSet(FeatureSet):
         :param kwargs: any additional data needed to preprocess the `source_object` into a feature set
         :return: an instance of `FeatureSet` built based on the `source_object` passed in
         """
-        # TODO: build sets of sentences that have similar features
-        if known_clas is None:
-            raise ValueError("known_clas must be provided to build")
-        feature_instance = OurFeature(speech=source_object, name="word_freq")
-        features = feature_instance.makeWordDict()
+        words = word_tokenize(source_object.lower())
+        filtered_words = [word.lower() for word in words if word not in stop_words]
+
+        unique_words = set(filtered_words)
+        features = {(unique_words, True) for word in unique_words}
 
         return OurFeatureSet(features, known_clas)
 
@@ -69,7 +55,7 @@ class OurAbstractClassifier(AbstractClassifier):
     def __init__(self):
         super().__init__()
         self.feature_freq_dist = FreqDist()
-        self.total_samples = 0
+        self.total_samples = {'Republican': 0, 'Democratic': 0}
 
     def gamma(self, a_feature_set: FeatureSet) -> str:
         """Given a single feature set representing an object to be classified, returns the most probable class
@@ -80,19 +66,7 @@ class OurAbstractClassifier(AbstractClassifier):
         """
         # TODO: return probability for the sentence and the political party
         # Calculate probabilities for each class based on feature frequencies
-        class_probabilities = {}
-        total_features = sum(a_feature_set.feat.values())
-
-        for class_label in iter(self.feature_freq_dist):
-            class_probabilities[class_label] = 0
-            for word, count in a_feature_set.feat.items():
-                # Using Laplace smoothing to avoid division by zero
-                probability_word_given_class = (self.feature_freq_dist[word, class_label] + 1) / (
-                        self.feature_freq_dist.N() + total_features)
-                class_probabilities[class_label] += count * probability_word_given_class
-
-        # Return the class with the highest probability
-        return max(class_probabilities, key=class_probabilities.get)
+        class_log_probabilities = {}
 
     def present_features(self, top_n: int = 1) -> None:
         """Prints `top_n` feature(s) used by this classifier in the descending order of informativeness of the
@@ -120,8 +94,8 @@ class OurAbstractClassifier(AbstractClassifier):
         classifier = OurAbstractClassifier()
 
         for feature_set in training_set:
+            classifier.total_samples[feature_set.clas] += 1
             for word, count in feature_set.feat.items():
                 classifier.feature_freq_dist[word, feature_set.clas] += count
-                classifier.total_samples += 1
 
         return classifier

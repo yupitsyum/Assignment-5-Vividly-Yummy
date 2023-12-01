@@ -1,6 +1,7 @@
 import nltk
 from nltk.corpus import inaugural
 import random
+
 from political_party_classifier_models import *
 
 __author__ = "Eli Tiao, David Ponce De Leon"

@@ -1,5 +1,6 @@
 import nltk
 from nltk.corpus import inaugural
+
 from nltk.probability import FreqDist
 from nltk.tokenize import word_tokenize
 import random

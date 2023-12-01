@@ -54,7 +54,7 @@ class OurAbstractClassifier(AbstractClassifier):
         accurately identify which party the speech is from. """
     def __init__(self):
         super().__init__()
-        self.feature_freq_dist = FreqDist()
+        self.feature_freq_dist = {'Republican': {}, 'Democratic': {}}
         self.total_samples = {'Republican': 0, 'Democratic': 0}
 
     def gamma(self, a_feature_set: FeatureSet) -> str:
@@ -91,11 +91,14 @@ class OurAbstractClassifier(AbstractClassifier):
         :return: an instance of `AbstractClassifier` with its training already completed
         """
         # TODO: Implement it such that it takes in a feature set of sentences of either political party to train
-        classifier = OurAbstractClassifier()
+        classifier = {}
 
         for feature_set in training_set:
-            classifier.total_samples[feature_set.clas] += 1
-            for word, count in feature_set.feat.items():
-                classifier.feature_freq_dist[word, feature_set.clas] += count
+            party = feature_set.clas
+            for feature in feature_set.feat:
+                if feature not in classifier:
+                    classifier[party][feature] = 1
+                else:
+                    classifier[party][feature] += 1
 
         return classifier

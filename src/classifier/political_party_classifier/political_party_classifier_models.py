@@ -64,17 +64,40 @@ class OurAbstractClassifier(AbstractClassifier):
         """
         # TODO: return probability for the sentence and the political party
         # Calculate probabilities for each class based on feature frequencies
-        rep_prob = 0.5
-        dem_prob = 0.5
-        for feature in a_feature_set.feat:
-            if self.dict.get(feature):
-                rep_prob += self.dict[feature][0]
-                dem_prob += self.dict[feature][1]
+        # rep_prob = 0.6
+        # dem_prob = 0.4
+        # for feature in a_feature_set.feat:
+        #     if self.dict.get(feature.name):
+        #         rep_prob *= self.dict[feature.name][0]
+        #         dem_prob *= self.dict[feature.name][1]
+        #
+        # if rep_prob > dem_prob:
+        #     return "Republican"
+        # else:
+        #     return "Democrat"
+        republican_probability = 0.6
+        democratic_probability = 0.4
 
-        if rep_prob > dem_prob:
+        # for feature in a_feature_set.feat:
+        #     for features, (rep, dem) in self.dict.items():
+        #         if feature.name == features:
+        #             republican_probability += rep
+        #             democratic_probability += dem
+
+        for features, (rep, dem) in self.dict.items():
+            for feature in a_feature_set.feat:
+                if feature.name == features:
+                    republican_probability += rep
+                    democratic_probability += dem
+
+        republican_probability = math.log(republican_probability)
+        democratic_probability = math.log(democratic_probability)
+
+        if republican_probability > democratic_probability:
             return "Republican"
         else:
             return "Democrat"
+
 
     def present_features(self, top_n: int = 1) -> None:
         """Prints `top_n` feature(s) used by this classifier in the descending order of informativeness of the
@@ -91,10 +114,10 @@ class OurAbstractClassifier(AbstractClassifier):
         for feature, (rep_prob, dem_prob) in sorted_features[:top_n]:
             if rep_prob > dem_prob:
                 rep = rep_prob / dem_prob
-                print(f"{feature.name} Republican:Democrat, {rep}:1")
+                print(f"{feature} Republican:Democrat, {rep}:1")
             elif dem_prob > rep_prob:
                 dem = dem_prob / rep_prob
-                print(f"{feature.name} Democrat:Republican, {dem}:1")
+                print(f"{feature} Democrat:Republican, {dem}:1")
 
     @classmethod
     def train(cls, training_set: Iterable[FeatureSet]) -> AbstractClassifier:
@@ -111,19 +134,25 @@ class OurAbstractClassifier(AbstractClassifier):
         republican_tally = 0
         democratic_tally = 0
 
+        for fset in training_set:
+            if fset.clas == "Republican":
+                republican_tally += 1
+            if fset.clas == "Democrat":
+                democratic_tally += 1
+
         for feature_set in training_set:
             for feature in feature_set.feat:
-                if classifier.get(feature, 0) == 0:
-                    classifier[feature] = [0,0]
+                if classifier.get(feature.name, 0) == 0:
+                    classifier[feature.name] = [0,0]
                 if feature_set.clas == "Republican":
-                    classifier[feature][0] += 1
+                    classifier[feature.name][0] += 1
                     republican_tally += 1
-                elif feature_set.clas == "Democrat":
-                    classifier[feature][1] += 1
+                if feature_set.clas == "Democrat":
+                    classifier[feature.name][1] += 1
                     democratic_tally += 1
 
         for feature in classifier.keys():
-            classifier[feature][0] = (classifier[feature][0] + 1) / (republican_tally + len(classifier))
-            classifier[feature][1] = (classifier[feature][1] + 1) / (democratic_tally + len(classifier))
+            classifier[feature][0] = (classifier[feature][0] + 1) / (republican_tally)
+            classifier[feature][1] = (classifier[feature][1] + 1) / (democratic_tally)
 
         return OurAbstractClassifier(classifier)

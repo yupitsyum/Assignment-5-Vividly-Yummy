@@ -71,37 +71,40 @@ test_data = [
     speeches['1885-Cleveland.txt'],     # 2 Expected: Actual: 'Republican'
     speeches['1889-Harrison.txt'],      # 3 Expected: 'Republican' Actual: 'Republican'
     speeches['1893-Cleveland.txt'],     # 4 Expected: Actual: 'Republican'
-    speeches['1897-McKinley.txt'],      # 5 Expected: 'Republican' Actual:
+    speeches['1897-McKinley.txt'],      # 5 Expected: 'Republican' Actual: 'Republican'
     speeches['1901-McKinley.txt'],      # 6 Expected: 'Republican' Actual: 'Republican'
     speeches['1905-Roosevelt.txt'],     # 7 Expected: 'Republican' Actual: 'Republican'
-    speeches['1909-Taft.txt'],          # 8 Expected: 'Republican' Actual:
+    speeches['1909-Taft.txt'],          # 8 Expected: 'Republican' Actual: 'Republican'
     speeches['1913-Wilson.txt'],        # 9 Expected: Actual: 'Republican'
     speeches['1917-Wilson.txt'],        # 10 Expected: Actual: 'Republican'
     speeches['1921-Harding.txt'],       # 11 Expected: 'Republican' Actual: 'Republican'
-    speeches['1925-Coolidge.txt'],      # 12 Expected: 'Republican' Actual:
+    speeches['1925-Coolidge.txt'],      # 12 Expected: 'Republican' Actual: 'Republican'
     speeches['1929-Hoover.txt'],        # 13 Expected: 'Republican' Actual: 'Republican'
     speeches['1933-Roosevelt.txt'],     # 14 Expected: Actual:
     speeches['1937-Roosevelt.txt'],     # 15 Expected: Actual: 'Republican'
     speeches['1941-Roosevelt.txt'],     # 16 Expected: Actual: 'Republican'
-    speeches['1945-Roosevelt.txt'],     # 17 Expected: Actual: 'Republican'
+    speeches['1945-Roosevelt.txt'],     # 17 Expected: Actual:
     speeches['1949-Truman.txt'],        # 18 Expected: Actual:
     speeches['1953-Eisenhower.txt'],    # 19 Expected: 'Republican' Actual: 'Republican'
     speeches['1957-Eisenhower.txt'],    # 20 Expected: 'Republican' Actual: 'Republican'
     speeches['1961-Kennedy.txt'],       # 21 Expected: Actual:
-    speeches['1965-Johnson.txt'],       # 22 Expected: Actual: 'Republican'
-    speeches['1969-Nixon.txt'],         # 23 Expected: 'Republican' Actual: 'Republican'
-    speeches['1973-Nixon.txt'],         # 24 Expected: 'Republican' Actual: 'Republican'
+    speeches['1965-Johnson.txt'],       # 22 Expected: Actual:
+    speeches['1969-Nixon.txt'],         # 23 Expected: 'Republican' Actual:
+    speeches['1973-Nixon.txt'],         # 24 Expected: 'Republican' Actual:
     speeches['1977-Carter.txt'],        # 25 Expected: Actual: 'Republican'
     speeches['1981-Reagan.txt'],        # 26 Expected: 'Republican' Actual: 'Republican'
-    speeches['1985-Reagan.txt'],        # 27 Expected: 'Republican' Actual:
+    speeches['1985-Reagan.txt'],        # 27 Expected: 'Republican' Actual: 'Republican'
     speeches['1989-Bush.txt'],          # 28 Expected: 'Republican' Actual: 'Republican'
     speeches['1993-Clinton.txt'],       # 29 Expected: Actual: 'Republican'
     speeches['1997-Clinton.txt'],       # 30 Expected: Actual: 'Republican'
     speeches['2001-Bush.txt'],          # 31 Expected: 'Republican' Actual: 'Republican'
     speeches['2005-Bush.txt'],          # 32 Expected: 'Republican' Actual: 'Republican'
-    speeches['2009-Obama.txt'],         # 33 Expected: Actual:
+    speeches['2009-Obama.txt'],         # 33 Expected: Actual: 'Republican'
     speeches['2013-Obama.txt'],         # 34 Expected: Actual: 'Republican'
-    speeches['2017-Trump.txt'],         # 35 Expected: 'Republican' Actual: 'Republican'
+    speeches['2017-Trump.txt'],         # 35 Expected: 'Republican' Actual:
+
+    # 22/35 = 0.63 accuracy !!
+
 ]
 # Define stop words
 stop_words = set(stopwords.words('english'))
@@ -119,7 +122,7 @@ classifier = OurAbstractClassifier.train(training_feature_sets)
 
 
 
-top = classifier.present_features(50)
+top = classifier.present_features(30)
 print(top)
 i = 0
 for speech in test_data:

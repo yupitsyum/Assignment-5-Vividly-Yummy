@@ -44,7 +44,7 @@ class OurFeatureSet(FeatureSet):
         filtered_words = [word.lower() for word in words if word.lower() not in stop_words]
 
         unique_words = set(filtered_words)
-        features = {OurFeature(word, True) for word in filtered_words}
+        features = {OurFeature(word, True) for word in unique_words}
 
         return OurFeatureSet(features, known_clas)
 
@@ -146,10 +146,8 @@ class OurAbstractClassifier(AbstractClassifier):
                     classifier[feature.name] = [0,0]
                 if feature_set.clas == "Republican":
                     classifier[feature.name][0] += 1
-                    republican_tally += 1
                 if feature_set.clas == "Democrat":
                     classifier[feature.name][1] += 1
-                    democratic_tally += 1
 
         for feature in classifier.keys():
             classifier[feature][0] = (classifier[feature][0] + 1) / (republican_tally)
